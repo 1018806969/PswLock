@@ -6,9 +6,26 @@
 //  Copyright © 2016年 txx. All rights reserved.
 //
 
+/*
+ 
+  此控制器展示一切密码处理相关逻辑
+ 
+ 经典：
+     对外：绘制成功，通过代理将结果传递出去
+     对内：绘制失败，通过lockView的方法传递进去
+ */
+
 #import <UIKit/UIKit.h>
 #import "LockView.h"
 
+/**
+ 操作密码的类型，一直不变
+
+ - TXLockOperationTypeCreate: 创建密码
+ - TXLockOperationTypeValidate: 验证密码
+ - TXLockOperationTypeModify: 修改密码
+ - TXLockOperationTypeRemove: 删除密码
+ */
 typedef NS_ENUM(NSInteger, TXLockOperationType){
     
     TXLockOperationTypeCreate,
@@ -17,6 +34,7 @@ typedef NS_ENUM(NSInteger, TXLockOperationType){
     TXLockOperationTypeRemove
     
 };
+
 @class LockViewController;
 @protocol LockViewControllerDelegate <NSObject>
 
@@ -47,7 +65,7 @@ typedef NS_ENUM(NSInteger, TXLockOperationType){
 @interface LockViewController : UIViewController
 
 /**
- 操作类型
+ 操作类型，
  */
 @property(nonatomic,assign)TXLockOperationType type;
 

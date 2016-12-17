@@ -13,8 +13,19 @@
 {
     CGPoint _point;
 }
+/**
+ lockButton数组，存放所有lockButton
+ */
 @property(nonatomic,strong)NSMutableArray *lockButtons;
-@property(nonatomic,strong)NSMutableArray *selectedLoakButtons;
+
+/**
+ 当前选中的lockButton数组，存放所有被选中的lockButton
+ */
+@property(nonatomic,strong)NSMutableArray *selectedLockButtons;
+
+/**
+ 密码
+ */
 @property(nonatomic,strong)NSString       *psw;
 
 @end
@@ -36,6 +47,9 @@
     }
     return self ;
 }
+/**
+ 创建9个lockButton，并设置不同的tag区分，添加到数组
+ */
 -(void)addLockButton
 {
     for (int i = 0; i < 9; i++) {
@@ -60,11 +74,13 @@
         CGFloat y        = interval +(_w_h +interval)*(i%3);
         LockButton *button =self.lockButtons[i];
         button.frame = CGRectMake(x, y, _w_h, _w_h);
-//        button.backgroundColor = [UIColor grayColor];
         button.layer.cornerRadius = _w_h/2;
         button.layer.masksToBounds = YES ;
     }
 }
+/**
+ 绘制密码连线
+ */
 -(void)drawRect:(CGRect)rect
 {
     
@@ -76,7 +92,7 @@
     [_lineColor set];
     
  
-    NSInteger count = _selectedLoakButtons.count;
+    NSInteger count = _selectedLockButtons.count;
     for ( NSInteger i = 0; i<count; i++) {
         LockButton *button = self.selectedLoakButtons[i];
         if (i == 0) {
@@ -90,6 +106,9 @@
     [bezierPath stroke];
     
 }
+/**
+ 更新绘制，当手势链接到下一个lockBUtton时
+ */
 -(void)updateDraw
 {
     for (LockButton *button in self.lockButtons) {
@@ -98,7 +117,7 @@
             //并且这个按钮之前没有被选中
             if (button.lockButtonState == TXLockButtonStateNormal) {
                 //标记按钮被选中，并添加数组
-                [_selectedLoakButtons addObject:button];
+                [_selectedLockButtons addObject:button];
                 button.lockButtonState = TXLockButtonStateSelected;
                 break;
             }
@@ -107,6 +126,9 @@
     //重新绘制
     [self setNeedsDisplay];
 }
+/**
+ 绘制密码结束时调用
+ */
 -(void)setupPsw
 {
     NSString *psw = @"";
@@ -114,10 +136,13 @@
         psw = [psw stringByAppendingString:[NSString stringWithFormat:@"%ld",button.tag]];
     }
     _psw = psw ;
+    //通过代理将绘制的密码传递出去，然后再传递出去之后进一步判断
     if (_delegate && [_delegate respondsToSelector:@selector(lockView:didFinishCreatePsw:)]) {
         [self.delegate lockView:self didFinishCreatePsw:_psw];
     }
 }
+//自定义手势时 Apple建议需要同时重写以下四个方法
+
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesBegan:touches withEvent:event];
@@ -129,31 +154,36 @@
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesMoved:touches withEvent:event];
     _point = [[touches anyObject] locationInView:self];
-    // 更新密码绘制状态
     [self updateDraw];
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
-    // 获取绘制好的密码
     [self setupPsw];
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesCancelled:touches withEvent:event];
-    // 获取绘制好的密码
     [self setupPsw];
 }
+/**
+ 把密码传递出去之后，如何密码有问题，会通过这个方法传递回来做相应处理，并且在一段时间time之后，在回调出去做相应处理
+
+ @param psw 传递回来的错误密码
+ @param time 时间间隔
+ @param handler 回调
+ */
 -(void)errorPsw:(NSString *)psw time:(CGFloat)time finishHandle:(void (^)(LockView *))handler
 {
     //情况选中值
-    self.selectedLoakButtons = nil ;
+    self.selectedLockButtons = nil ;
     
     //使用c语言的方式获取字符串的每一位，比较方便
     const char *cPsw = [psw cStringUsingEncoding:NSUTF8StringEncoding];
     for (int i = 0; i<psw.length; i++) {
         //将char转换为对应的int （ASII 48）
         int index = cPsw[i] - '0';
+        //先将对应的lockbutton状态改变为error，显示不同的图片
         LockButton *errorButton = self.lockButtons[index];
         errorButton.lockButtonState = TXLockButtonStateError;
         [self.selectedLoakButtons addObject:errorButton];
@@ -177,20 +207,23 @@
     });
 
 }
+/**
+ 绘制最初的状态，等待重新绘制
+ */
 - (void)resetDrawing {
-    for (LockButton *button in _selectedLoakButtons) {
+    for (LockButton *button in _selectedLockButtons) {
         button.lockButtonState = TXLockButtonStateNormal;
     }
-    [_selectedLoakButtons removeAllObjects];
+    [_selectedLockButtons removeAllObjects];
     [self setNeedsDisplay];
 }
 
 -(NSMutableArray *)selectedLoakButtons
 {
-    if (!_selectedLoakButtons) {
-        _selectedLoakButtons = [[NSMutableArray alloc]init];
+    if (!_selectedLockButtons) {
+        _selectedLockButtons = [[NSMutableArray alloc]init];
     }
-    return _selectedLoakButtons ;
+    return _selectedLockButtons ;
 }
 -(NSMutableArray *)lockButtons
 {

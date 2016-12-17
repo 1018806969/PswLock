@@ -10,10 +10,19 @@
 
 @interface LockButton()
 
+/**
+ 正常情况的图片
+ */
 @property(nonatomic,strong)UIImage *normalImg;
 
+/**
+ 被选中状态的图片
+ */
 @property(nonatomic,strong)UIImage *selectedImg;
 
+/**
+ 错误情况下的图片
+ */
 @property(nonatomic,strong)UIImage *errorImg;
 
 @end
@@ -42,7 +51,7 @@
     self.lockButtonState = TXLockButtonStateNormal;
 }
 /**
- 重写lockButtonState的set方法
+ 重写lockButtonState的set方法，改变lockButton的状态自定切换lockButton的图片
  */
 -(void)setLockButtonState:(TXLockButtonState)lockButtonState
 {

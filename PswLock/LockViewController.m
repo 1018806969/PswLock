@@ -10,11 +10,19 @@
 
 static NSString *const TXPswKey = @"TXPswKey";
 
+/**
+ 当前要进行的操作状态,第一状态是根据type决定的，后面会根据情况再变
+
+ - TXLockViewControllerCurrentStateCreate: 创建密码
+ - TXLockViewControllerCurrentStateCreateEnsure,确认密码
+ - TXLockViewControllerCurrentStateValidate 验证密码
+
+ */
 typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
 {
-    TXLockViewControllerCurrentStateCreate,//创建密码
-    TXLockViewControllerCurrentStateCreateEnsure,//确认密码
-    TXLockViewControllerCurrentStateValidate //验证密码
+    TXLockViewControllerCurrentStateCreate,
+    TXLockViewControllerCurrentStateCreateEnsure,
+    TXLockViewControllerCurrentStateValidate
 };
 
 @interface LockViewController ()<LockViewDelegate>
@@ -50,8 +58,15 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
     
     
 }
+/**
+ lockView的代理方法-----touchCance或者touchEnd会调用此代理，也就是手势绘制完成之后处理事件
+
+ @param lockView lockView
+ @param psw 绘制的密码
+ */
 -(void)lockView:(LockView *)lockView didFinishCreatePsw:(NSString *)psw
 {
+    //判断操作类型，然后进行相应处理
     if (self.type == TXLockOperationTypeCreate)
     {
         [self createPsw:psw lockView:lockView];
@@ -66,9 +81,14 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
         [self removePsw:psw lockView:lockView];
     }
 }
+/**
+ 创建密码 ----改变密码也包含创建密码
+
+ @param psw 绘制的密码
+ @param lockView lockView
+ */
 -(void)createPsw:(NSString *)psw lockView:(LockView *)lockView
 {
-    NSLog(@"--------%ld-------%ld",(long)self.type,psw.length);
     if (self.currentState == TXLockViewControllerCurrentStateCreate) {
         if (psw.length < self.mininumCount) {
             self.stateLabel.text = [NSString stringWithFormat:@"链接的密码数少于%ld个",(long)_mininumCount];
@@ -124,6 +144,12 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
         }
     }
 }
+/**
+ 验证密码--验证密码，修改密码，删除密码都要验证密码
+
+ @param psw 绘制的密码
+ @param lockView lockView
+ */
 -(void)verifyPsw:(NSString *)psw lockView:(LockView *)lockView
 {
     self.stateLabel.text = @"请绘制旧密码";
@@ -172,6 +198,12 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
         }
     }
 }
+/**
+ 修改密码
+
+ @param psw 绘制的密码
+ @param lockView lockView
+ */
 -(void)modifyPsw:(NSString *)psw LockView:(LockView *)lockView
 {
     if (self.currentState == TXLockViewControllerCurrentStateValidate) {
@@ -183,15 +215,27 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
         [self createPsw:psw lockView:lockView];
     }
 }
+/**
+ 删除密码-----要先验证密码
+
+ @param psw 绘制的密码
+ @param lockView lockView
+ */
 -(void)removePsw:(NSString *)psw lockView:(LockView *)lockView
 {
     [self verifyPsw:psw lockView:lockView];
 }
+/**
+ 重写属性occurError的set方法------当出现错误的时候改变属性值，从而改变状态控件的字体颜色
+ */
 -(void)setOccurError:(BOOL)occurError
 {
     _occurError = occurError;
     self.stateLabel.textColor = _occurError ? [UIColor redColor] :[UIColor blackColor];
 }
+/**
+ 重写属性type的set方法-------根据type的不同确定状态控件的显示内容和currentStatue的初始化
+ */
 - (void)setType:(TXLockOperationType)type{
     _type = type;
     if (type == TXLockOperationTypeModify) {
@@ -245,11 +289,17 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
     }
     return _backButton ;
 }
+/**
+ 保存密码
+ */
 +(void)savePsw:(NSString *)psw
 {
     [[NSUserDefaults standardUserDefaults]setValue:psw forKey:TXPswKey];
     [[NSUserDefaults standardUserDefaults]synchronize];
 }
+/**
+ 返回上一页
+ */
 -(void)backClick
 {
     [self dismissViewControllerAnimated:YES completion:nil];

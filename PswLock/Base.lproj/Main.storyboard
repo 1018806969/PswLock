@@ -25,7 +25,7 @@
                                 <rect key="frame" x="0.0" y="186" width="320" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.85219169463087252" green="1" blue="0.98796665268456241" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="verify"/>
+                                <state key="normal" title="验证密码"/>
                                 <connections>
                                     <action selector="verifyClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="pHw-qe-ZSD"/>
                                 </connections>
@@ -34,7 +34,7 @@
                                 <rect key="frame" x="0.0" y="217" width="320" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.85219169459999999" green="1" blue="0.98796665269999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="change"/>
+                                <state key="normal" title="修改密码"/>
                                 <connections>
                                     <action selector="changeClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cY1-dE-Tqc"/>
                                 </connections>
@@ -43,7 +43,7 @@
                                 <rect key="frame" x="0.0" y="155" width="320" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.85219169459999999" green="1" blue="0.98796665269999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="create"/>
+                                <state key="normal" title="  创建密码"/>
                                 <connections>
                                     <action selector="CreateClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="r9D-1l-MWc"/>
                                 </connections>
@@ -52,7 +52,7 @@
                                 <rect key="frame" x="0.0" y="248" width="320" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.85219169459999999" green="1" blue="0.98796665269999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="delete"/>
+                                <state key="normal" title="删除密码"/>
                                 <connections>
                                     <action selector="deleteClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NAf-Uq-PgR"/>
                                 </connections>
@@ -61,7 +61,7 @@
                                 <rect key="frame" x="0.0" y="279" width="320" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.85219169459999999" green="1" blue="0.98796665269999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="putIn"/>
+                                <state key="normal" title="输入数字支付密码"/>
                                 <connections>
                                     <action selector="putInClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="agm-qr-I5t"/>
                                 </connections>
