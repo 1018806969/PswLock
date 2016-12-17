@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "LockViewController.h"
+#import "PswView.h"
 
 @interface ViewController ()<LockViewControllerDelegate>
 
@@ -50,8 +51,11 @@
         NSLog(@"你没有原始密码无法删除，请先创建密码");
     }
 }
-- (IBAction)putInClick:(id)sender {
-    
+-(IBAction)putInClick:(id)sender {
+    PswView *pswView = [[PswView alloc]initWithNormalImg:nil selectedImg:[UIImage imageNamed:@"circle"] separateLineColor:[UIColor redColor] pswLength:6 finishHandler:^(PswView *pswView, NSString *psw) {
+        [pswView hide];
+    }];
+    [pswView show];
 }
 -(void)type:(TXLockOperationType)type mininumCount:(NSInteger)count
 {

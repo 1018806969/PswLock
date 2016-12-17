@@ -16,6 +16,8 @@
 		B4691FAE1E03BF30001BDC81 /* LockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B4691FAD1E03BF30001BDC81 /* LockViewController.m */; };
 		B4691FB11E03C3B5001BDC81 /* LockView.m in Sources */ = {isa = PBXBuildFile; fileRef = B4691FB01E03C3B5001BDC81 /* LockView.m */; };
 		B4691FB71E03C8D9001BDC81 /* LockButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B4691FB61E03C8D9001BDC81 /* LockButton.m */; };
+		B4691FBB1E0516CA001BDC81 /* PswView.m in Sources */ = {isa = PBXBuildFile; fileRef = B4691FBA1E0516CA001BDC81 /* PswView.m */; };
+		B4691FBE1E0516F3001BDC81 /* InputPswView.m in Sources */ = {isa = PBXBuildFile; fileRef = B4691FBD1E0516F3001BDC81 /* InputPswView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,10 @@
 		B4691FB01E03C3B5001BDC81 /* LockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LockView.m; sourceTree = "<group>"; };
 		B4691FB51E03C8D9001BDC81 /* LockButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockButton.h; sourceTree = "<group>"; };
 		B4691FB61E03C8D9001BDC81 /* LockButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LockButton.m; sourceTree = "<group>"; };
+		B4691FB91E0516CA001BDC81 /* PswView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PswView.h; sourceTree = "<group>"; };
+		B4691FBA1E0516CA001BDC81 /* PswView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PswView.m; sourceTree = "<group>"; };
+		B4691FBC1E0516F3001BDC81 /* InputPswView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputPswView.h; sourceTree = "<group>"; };
+		B4691FBD1E0516F3001BDC81 /* InputPswView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputPswView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,12 +78,11 @@
 				B4691F9B1E03BCF4001BDC81 /* ViewController.h */,
 				B4691F9C1E03BCF4001BDC81 /* ViewController.m */,
 				B4691F9E1E03BCF4001BDC81 /* Main.storyboard */,
-				B4691FAC1E03BF30001BDC81 /* LockViewController.h */,
-				B4691FAD1E03BF30001BDC81 /* LockViewController.m */,
-				B4691FAF1E03C3B5001BDC81 /* LockView.h */,
-				B4691FB01E03C3B5001BDC81 /* LockView.m */,
-				B4691FB51E03C8D9001BDC81 /* LockButton.h */,
-				B4691FB61E03C8D9001BDC81 /* LockButton.m */,
+				B4691FB91E0516CA001BDC81 /* PswView.h */,
+				B4691FBA1E0516CA001BDC81 /* PswView.m */,
+				B4691FBC1E0516F3001BDC81 /* InputPswView.h */,
+				B4691FBD1E0516F3001BDC81 /* InputPswView.m */,
+				B4691FB81E0513DF001BDC81 /* GestureLock */,
 				B4691FA11E03BCF4001BDC81 /* Assets.xcassets */,
 				B4691FA31E03BCF4001BDC81 /* LaunchScreen.storyboard */,
 				B4691FA61E03BCF4001BDC81 /* Info.plist */,
@@ -92,6 +97,19 @@
 				B4691F961E03BCF4001BDC81 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B4691FB81E0513DF001BDC81 /* GestureLock */ = {
+			isa = PBXGroup;
+			children = (
+				B4691FAC1E03BF30001BDC81 /* LockViewController.h */,
+				B4691FAD1E03BF30001BDC81 /* LockViewController.m */,
+				B4691FAF1E03C3B5001BDC81 /* LockView.h */,
+				B4691FB01E03C3B5001BDC81 /* LockView.m */,
+				B4691FB51E03C8D9001BDC81 /* LockButton.h */,
+				B4691FB61E03C8D9001BDC81 /* LockButton.m */,
+			);
+			name = GestureLock;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,9 +185,11 @@
 			files = (
 				B4691FB71E03C8D9001BDC81 /* LockButton.m in Sources */,
 				B4691F9D1E03BCF4001BDC81 /* ViewController.m in Sources */,
+				B4691FBB1E0516CA001BDC81 /* PswView.m in Sources */,
 				B4691FB11E03C3B5001BDC81 /* LockView.m in Sources */,
 				B4691F9A1E03BCF4001BDC81 /* AppDelegate.m in Sources */,
 				B4691F971E03BCF4001BDC81 /* main.m in Sources */,
+				B4691FBE1E0516F3001BDC81 /* InputPswView.m in Sources */,
 				B4691FAE1E03BF30001BDC81 /* LockViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
