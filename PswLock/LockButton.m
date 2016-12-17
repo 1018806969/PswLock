@@ -24,27 +24,28 @@
 {
     switch (state) {
         case TXLockButtonStateNormal:{
-            self.image = image ;
+            self.normalImg = image ;
             break;
         }
         case TXLockButtonStateSelected:{
-            self.image = image ;
+            self.selectedImg = image ;
             break;
         }
         case TXLockButtonStateError:{
-            self.image = image ;
+            self.errorImg = image ;
             break;
         }
         default:
             break;
     }
+    //设置图片后，设置为默认状态
+    self.lockButtonState = TXLockButtonStateNormal;
 }
 /**
  重写lockButtonState的set方法
  */
 -(void)setLockButtonState:(TXLockButtonState)lockButtonState
 {
-    if (_lockButtonState == lockButtonState)return ;
     _lockButtonState = lockButtonState ;
     
     switch (_lockButtonState) {
@@ -60,8 +61,7 @@
             self.image = self.errorImg ;
             break;
         }
-
-        default:
+            default:
             break;
     }
 }

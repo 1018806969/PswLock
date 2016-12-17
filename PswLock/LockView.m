@@ -60,13 +60,14 @@
         CGFloat y        = interval +(_w_h +interval)*(i%3);
         LockButton *button =self.lockButtons[i];
         button.frame = CGRectMake(x, y, _w_h, _w_h);
-        button.backgroundColor = [UIColor grayColor];
+//        button.backgroundColor = [UIColor grayColor];
         button.layer.cornerRadius = _w_h/2;
         button.layer.masksToBounds = YES ;
     }
 }
 -(void)drawRect:(CGRect)rect
 {
+    
     if (self.selectedLoakButtons.count == 0) return;
     
     UIBezierPath *bezierPath = [UIBezierPath bezierPath];

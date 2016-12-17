@@ -7,18 +7,19 @@
 //
 
 #import "LockViewController.h"
-#import "LockView.h"
+
+static NSString *const TXPswKey = @"TXPswKey";
+
 typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
 {
     TXLockViewControllerCurrentStateCreate,//创建密码
-    TXLockViewControllerCurrentStateVerify,//确认密码
-    TXLockViewControllerCurrentStateValidate//验证密码
+    TXLockViewControllerCurrentStateCreateEnsure,//确认密码
+    TXLockViewControllerCurrentStateValidate //验证密码
 };
 
 @interface LockViewController ()<LockViewDelegate>
 
 @property(nonatomic,strong)UIButton     *backButton;
-@property(nonatomic,strong)LockView     *lockView;
 
 /**
  发生错误
@@ -51,14 +52,24 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
 }
 -(void)lockView:(LockView *)lockView didFinishCreatePsw:(NSString *)psw
 {
-    if (self.type == TXLockOperationTypeCreate) {
+    if (self.type == TXLockOperationTypeCreate)
+    {
         [self createPsw:psw lockView:lockView];
+    }else if (self.type == TXLockOperationTypeValidate)
+    {
+        [self verifyPsw:psw lockView:lockView];
+    }else if (self.type == TXLockOperationTypeModify)
+    {
+        [self modifyPsw:psw LockView:lockView];
+    }else
+    {
+        [self removePsw:psw lockView:lockView];
     }
 }
 -(void)createPsw:(NSString *)psw lockView:(LockView *)lockView
 {
     NSLog(@"--------%ld-------%ld",(long)self.type,psw.length);
-    if (self.type == TXLockViewControllerCurrentStateCreate) {
+    if (self.currentState == TXLockViewControllerCurrentStateCreate) {
         if (psw.length < self.mininumCount) {
             self.stateLabel.text = [NSString stringWithFormat:@"链接的密码数少于%ld个",(long)_mininumCount];
             self.occurError = YES ;
@@ -72,17 +83,109 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
             //暂时的密码 ------未写入本地
             _tmpPsw = psw ;
             
-            //清楚绘制的密码
+            //清除绘制的密码
             [lockView resetDrawing];
             
             //更改操作步骤为确认密码
             self.stateLabel.text = @"请再次确认密码";
-            self.currentState = TXLockViewControllerCurrentStateVerify;
+            self.currentState = TXLockViewControllerCurrentStateCreateEnsure;
         }
-    }else if(self.currentState == TXLockViewControllerCurrentStateVerify)
+    }else if(self.currentState == TXLockViewControllerCurrentStateCreateEnsure)
     {
-#pragma mark ---------------end---------start--------------
+        if ([psw isEqualToString:_tmpPsw]) {
+            
+            [lockView resetDrawing];
+            [LockViewController savePsw:psw];
+            
+            if (self.type == TXLockOperationTypeCreate) {
+                self.stateLabel.text = @"密码创建成功";
+                if (_delegate && [_delegate respondsToSelector:@selector(lockViewController:didSuccessedCreatePsw:)]) {
+                    [_delegate lockViewController:self didSuccessedCreatePsw:psw];
+                }
+            }else if (self.type == TXLockOperationTypeModify)
+            {
+                self.stateLabel.text = @"修改密码成功";
+                if (_delegate && [_delegate respondsToSelector:@selector(lockViewController:modifyPsw:isSuccessful:)]) {
+                    [_delegate lockViewController:self modifyPsw:psw isSuccessful:YES];
+                }
+            }
+        }else
+        {
+            self.stateLabel.text = @"两次绘制密码不相同，创建失败";
+            self.occurError = YES ;
+            __weak typeof(self) weakself = self ;
+            [lockView errorPsw:psw time:1 finishHandle:^(LockView *lockView) {
+                if (weakself.type == TXLockOperationTypeModify || weakself.type == TXLockOperationTypeCreate) {
+                    weakself.stateLabel.text = @"请重新绘制密码";
+                }
+                weakself.occurError = NO;
+            }];
+            self.currentState = TXLockViewControllerCurrentStateCreate;
+        }
     }
+}
+-(void)verifyPsw:(NSString *)psw lockView:(LockView *)lockView
+{
+    self.stateLabel.text = @"请绘制旧密码";
+    NSString *originPsw = [[NSUserDefaults standardUserDefaults]objectForKey:TXPswKey];
+    if ([psw isEqualToString:originPsw]) {//正确
+        [lockView resetDrawing];
+        if (self.type == TXLockOperationTypeValidate) {
+            self.stateLabel.text = @"密码验证正确";
+            if (_delegate &&[_delegate respondsToSelector:@selector(lockViewController:VerifyPsw:isSuccessful:)]) {
+                [_delegate lockViewController:self VerifyPsw:psw isSuccessful:YES];
+            }
+        }else if (self.type == TXLockOperationTypeModify)
+        {
+            self.stateLabel.text = @"请绘制新的密码";
+            self.currentState = TXLockViewControllerCurrentStateCreate;
+        }else if (self.type == TXLockOperationTypeRemove)
+        {
+            if (_delegate && [_delegate respondsToSelector:@selector(lockViewController:removePsw:isSuccessful:)]) {
+                [_delegate lockViewController:self removePsw:psw isSuccessful:YES];
+            }
+        }
+    }else //错误
+    {
+        self.stateLabel.text = @"绘制密码错误";
+        self.occurError = YES ;
+        __weak typeof(self) weakSelf = self ;
+        [lockView errorPsw:psw time:1 finishHandle:^(LockView *lockView) {
+            weakSelf.stateLabel.text = @"请重新绘制密码";
+            weakSelf.occurError = NO;
+        }];
+        
+        if (self.type == TXLockOperationTypeValidate) {
+            if (_delegate && [_delegate respondsToSelector:@selector(lockViewController:VerifyPsw:isSuccessful:)]) {
+                [_delegate lockViewController:self VerifyPsw:psw isSuccessful:NO];
+            }
+        }else if (self.type == TXLockOperationTypeRemove)
+        {
+            if (_delegate && [_delegate respondsToSelector:@selector(lockViewController:removePsw:isSuccessful:)]) {
+                [_delegate lockViewController:self removePsw:psw isSuccessful:NO];
+            }
+        }else if (self.type == TXLockOperationTypeModify)
+        {
+            if (_delegate && [_delegate respondsToSelector:@selector(lockViewController:modifyPsw:isSuccessful:)]) {
+                [_delegate lockViewController:self modifyPsw:psw isSuccessful:NO];
+            }
+        }
+    }
+}
+-(void)modifyPsw:(NSString *)psw LockView:(LockView *)lockView
+{
+    if (self.currentState == TXLockViewControllerCurrentStateValidate) {
+         //验证旧密码
+        [self verifyPsw:psw lockView:lockView];
+    }else
+    {
+        //创建新密码
+        [self createPsw:psw lockView:lockView];
+    }
+}
+-(void)removePsw:(NSString *)psw lockView:(LockView *)lockView
+{
+    [self verifyPsw:psw lockView:lockView];
 }
 -(void)setOccurError:(BOOL)occurError
 {
@@ -95,9 +198,9 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
         self.stateLabel.text = @"输入旧密码";
         self.currentState = TXLockViewControllerCurrentStateValidate;
     }
-    else if (type == TXLockOperationTypeVerify) {
+    else if (type == TXLockOperationTypeValidate) {
         self.stateLabel.text = @"输入密码";
-        self.currentState = TXLockViewControllerCurrentStateVerify;
+        self.currentState = TXLockViewControllerCurrentStateValidate;
     }
     else if (type == TXLockOperationTypeRemove) {
         self.stateLabel.text = @"输入旧密码";
@@ -141,6 +244,11 @@ typedef NS_ENUM(NSInteger,TXLockViewControllerCurrentState)
         [_backButton addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
     }
     return _backButton ;
+}
++(void)savePsw:(NSString *)psw
+{
+    [[NSUserDefaults standardUserDefaults]setValue:psw forKey:TXPswKey];
+    [[NSUserDefaults standardUserDefaults]synchronize];
 }
 -(void)backClick
 {

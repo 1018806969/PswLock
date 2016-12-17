@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LockButton.h"
 @class LockView;
 
 @protocol LockViewDelegate <NSObject>
@@ -59,4 +60,6 @@
  */
 -(void)errorPsw:(NSString *)psw time:(CGFloat)time finishHandle:(void(^)(LockView *lockView))handle;
 
+
+-(void)setLockButtonImage:(UIImage *)image forState:(TXLockButtonState)state;
 @end
